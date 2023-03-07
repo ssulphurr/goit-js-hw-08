@@ -22,17 +22,19 @@ const formEl = document.querySelector('.feedback-form');
 const inputEl = formEl.elements.email;
 const textareaEl = formEl.elements.message;
 
+const formFilling = {
+  email: inputEl.value,
+  message: textareaEl.value,
+};
+
 inputEl.addEventListener('input', saveToStorage);
 
 function saveToStorage(evt) {
-  localStorage.setItem(
-    'feedback-form-state',
-    JSON.stringify([inputEl.value, textareaEl.value])
-  );
-  console.log(localStorage.getItem(JSON.parse('feedback-form-state')));
+  localStorage.setItem('feedback-form-state', JSON.stringify(formFilling));
 }
 
-console.log(9);
+console.log(JSON.parse(localStorage.getItem('feedback-form-state')));
+
 // inputEl.value = localStorage.getItem('feedback-form-state');
 
 // textarea adding
