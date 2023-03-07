@@ -1,43 +1,44 @@
-const formEl = document.querySelector('.feedback-form');
+import throttle from 'lodash.throttle';
 
-// //////////////////// trying to make with listener on form: unsuccessful
+const refs = {
+  form: document.querySelector('.feedback-form'),
+  email: document.querySelector('.feedback-form  input[name="email"]'),
+  message: document.querySelector('.feedback-form  textarea[name="message"]'),
+};
 
-// const formFilling = {
-//   email: formEl.elements.email.value,
-//   message: formEl.elements.message.value,
-// };
-
-// function saveToStorage(evt) {
-//   localStorage.setItem('feedback-form-state', JSON.stringify(formFilling));
-// }
-
-// formEl.addEventListener('input', saveToStorage);
-
-// const savedFilling = JSON.parse(localStorage.getItem('feedback-form-state'));
-
-// console.log(savedFilling);
-
-// //////////////////// variant with only intup fild working
-
-const inputEl = formEl.elements.email;
-const textareaEl = formEl.elements.message;
-
-inputEl.addEventListener('input', saveToStorage);
-
-function saveToStorage(evt) {
-  localStorage.setItem(
-    'feedback-form-state',
-    JSON.stringify([inputEl.value, textareaEl.value])
-  );
-  console.log(localStorage.getItem(JSON.parse('feedback-form-state')));
+function saveToStorage(filling) {
+  localStorage.setItem('feedback-form-state', JSON.stringify(filling));
 }
 
-console.log(9);
-// inputEl.value = localStorage.getItem('feedback-form-state');
+const formFilling = {};
 
-// textarea adding
+function saveFilling() {
+  formFilling.email = refs.email.value;
+  formFilling.message = refs.message.value;
+  saveToStorage(formFilling);
+}
 
-textareaEl.addEventListener('input', saveToStorage);
+const parsedFilling = JSON.parse(localStorage.getItem('feedback-form-state'));
 
-console.log(localStorage.getItem('feedback-form-state'));
-textareaEl.value = localStorage.getItem('feedback-form-state');
+console.log(parsedFilling);
+
+function getFilling() {
+  if (parsedFilling) {
+    refs.email.value = parsedFilling.email;
+    refs.message.value = parsedFilling.message;
+  }
+}
+
+function onSubmit(event) {
+  event.preventDefault();
+
+  localStorage.removeItem('feedback-form-state');
+  event.currentTarget.reset();
+  console.log(formFilling);
+}
+
+refs.form.addEventListener('input', throttle(saveFilling, 500));
+refs.form.addEventListener('submit', onSubmit);
+window.addEventListener('DOMContentLoaded', event => {
+  getFilling();
+});
